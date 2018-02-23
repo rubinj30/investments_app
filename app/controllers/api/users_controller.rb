@@ -13,16 +13,16 @@ class Api::UsersController < ApplicationController
     def show
         @user = User.find(params[:id])
         @investments = @user.investments
-
+        
         @data = {user: @user, investments: @investments}
-
+        
         render json: @data
     end
-    
+        
     def update
         @user = User.find(params[:id])
         @user.update!(user_params)
-
+        
         render json: @user
     end
 
