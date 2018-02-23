@@ -10,10 +10,11 @@ class Api::InvestmentsController < ApplicationController
     end
 
     def create
-        @user = User.find(params[:id])
+        @user = User.find(params[:user_id])
         @investment = Investment.create!(investment_params)
+        @user.investments << @investment
         
-        render json: @investment
+        render json: @user
     end
     
     def destroy
@@ -24,7 +25,7 @@ class Api::InvestmentsController < ApplicationController
 
     def update
         @investment = User.find(params[:user_id]).investments.find(params[:id])
-
+        @investment.update!(investment_params)
         render json: @investment
     end
 
