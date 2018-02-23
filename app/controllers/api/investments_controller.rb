@@ -5,8 +5,8 @@ class Api::InvestmentsController < ApplicationController
     end
 
     def show
-        @investments = User.find(params[:user_id]).investments.find(params[:id])
-        render json: @investments
+        @investment = User.find(params[:user_id]).investments.find(params[:id])
+        render json: @investment
     end
 
 end
