@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+// x
 import axios from 'axios'
 
 class SingleInvestmentPage extends Component {
@@ -11,8 +11,8 @@ class SingleInvestmentPage extends Component {
 
     componentWillMount = async () => {
         await this.getInvestment()
-        await this.fetchStockInfoFromApi()
-        // await this.fetchDailyStockPrices()
+        // await this.fetchStockInfoFromApi()
+        await this.fetchDailyStockPrices()
     }
 
     getInvestment = async () => {
@@ -21,19 +21,19 @@ class SingleInvestmentPage extends Component {
         this.setState({ investment: response.data })
     }
 
-    fetchStockInfoFromApi = async () => {
-        if (this.state.investment.category === 'stock') {
+    // fetchStockInfoFromApi = async () => {
+    //     if (this.state.investment.category === 'stock') {
 
-            const URL = `https://api.intrinio.com/companies?identifier=${this.state.investment.ticker}`
-            const response = await axios.get(URL,
-                {
-                    headers: {
-                        "X-Authorization-Public-Key": ""
-                    }
-                })
-            this.setState({ investmentInfo: response.data })
-        }
-    }
+    //         const URL = `https://api.intrinio.com/companies?identifier=${this.state.investment.ticker}`
+    //         const response = await axios.get(URL,
+    //             {
+    //                 headers: {
+    //                     "X-Authorization-Public-Key": ""
+    //                 }
+    //             })
+    //         this.setState({ investmentInfo: response.data })
+    //     }
+    // }
 
     fetchDailyStockPrices = async () => {
         const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=${this.state.investment.ticker}&apikey=`
@@ -41,10 +41,16 @@ class SingleInvestmentPage extends Component {
         this.setState({ dailyStockPrices: response.data["Weekly Adjusted Time Series"] })
     }
 
-
-
     render() {
-
+        // object of weekly stock prices
+        const dailyStockPrices = this.state.dailyStockPrices
+        
+        // object of weekly stock prices
+        const stockArray = []
+        for (var property1 in dailyStockPrices) {
+            stockArray.push(dailyStockPrices[property1])
+        } 
+        
         return (
             <div>
                 <div>

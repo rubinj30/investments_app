@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import styled from 'styled-components'
 import NewInvestment from './NewInvestment'
 
 class InvestmentList extends Component {
@@ -23,17 +24,24 @@ class InvestmentList extends Component {
         this.setState({ showNewForm: !this.state.showNewForm })
     }
 
-    
+
     render() {
         return (
             <div>
-                {this.state.investments.map(investment => (
-                    <Link key={investment.id} to={`/users/${this.props.match.params.id}/investments/${investment.id}`}>
-                        <div>{investment.id}</div> 
-                        <h3>Name: {investment.ticker}</h3>
-                
-                    </Link>
-                ))}
+                <Table>
+                    <Column>
+                    {this.state.investments.map(investment => (
+                        <div>
+                            ID {investment.id}
+                            <Link key={investment.id} to={`/users/${this.props.match.params.id}/investments/${investment.id}`}>
+                                <td>{investment.ticker}</td>
+                            </Link>
+                            
+                        </div>
+                    ))}
+                    </Column>
+
+                </Table>
 
                 <button onClick={this.toggleShowNewForm}>Add Investment</button>
 
@@ -44,3 +52,12 @@ class InvestmentList extends Component {
 }
 
 export default InvestmentList
+
+const Column = styled.div`
+    border-right: 1px black solid;
+`
+
+const Table = styled.div`
+    border: 1px black solid;
+    padding: 2px;
+`
