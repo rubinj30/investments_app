@@ -5,12 +5,14 @@ import axios from 'axios'
 class SingleInvestmentPage extends Component {
     state = {
         investment: {},
-        investmentInfo: {}
+        investmentInfo: {},
+        dailyStockPrices: {}
     }
 
     componentWillMount = async () => {
         await this.getInvestment()
-        this.fetchStockFromApi()
+        await this.fetchStockInfoFromApi()
+        // await this.fetchDailyStockPrices()
     }
 
     getInvestment = async () => {
@@ -19,33 +21,48 @@ class SingleInvestmentPage extends Component {
         this.setState({ investment: response.data })
     }
 
-    fetchStockFromApi = async () => {
-        const api_key = process.env.REACT_APP_STOCK_INFO
-        const URL = `https://api.intrinio.com/companies?identifier=${this.state.investment.ticker}`
-        const response = await axios.get(URL,
-            {
-                headers: {
-                    "X-Authorization-Public-Key": "837e5cd0c9df89299523f4abcd6bdeb1"
-                }
-            })
-        this.setState({ investmentInfo: response.data })
+    fetchStockInfoFromApi = async () => {
+        if (this.state.investment.category === 'stock') {
+
+            const URL = `https://api.intrinio.com/companies?identifier=${this.state.investment.ticker}`
+            const response = await axios.get(URL,
+                {
+                    headers: {
+                        "X-Authorization-Public-Key": ""
+                    }
+                })
+            this.setState({ investmentInfo: response.data })
+        }
     }
 
+    fetchDailyStockPrices = async () => {
+        const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=${this.state.investment.ticker}&apikey=`
+        const response = await axios.get(URL)
+        this.setState({ dailyStockPrices: response.data["Weekly Adjusted Time Series"] })
+    }
+
+
+
     render() {
+
         return (
             <div>
                 <div>
                     {this.state.investment.ticker}
                 </div>
                 <div>
-                    <div>CEO: {this.state.investmentInfo.ceo}</div>
-                    <div># of Employees: {this.state.investmentInfo.employees}</div>
-                    <div>Headquarters Located in: {this.state.investmentInfo.hq_state}</div>
+                    {this.state.investment.category === 'stock' ?
+                        <div>
+                            <div>CEO: {this.state.investmentInfo.ceo}</div>
+                            <div># of Employees: {this.state.investmentInfo.employees}</div>
+                            <div>Headquarters Located in: {this.state.investmentInfo.hq_state}</div>
 
-                    <div>Industry: {this.state.investmentInfo.industry_category}</div>
-                    <div>Exchange: {this.state.investmentInfo.stock_exchange}</div>
-                    <div><a href="http://amazon.com" target="_blank">Visit Website{this.state.investmentInfo.url}</a></div>
-                    <p>{this.state.investmentInfo.short_description}</p>
+                            <div>Industry: {this.state.investmentInfo.industry_category}</div>
+                            <div>Exchange: {this.state.investmentInfo.stock_exchange}</div>
+                            <div><a href="http://amazon.com" target="_blank">Visit Website{this.state.investmentInfo.url}</a></div>
+                            <p>{this.state.investmentInfo.short_description}</p>
+                        </div>
+                        : null}
                 </div>
             </div>
         )

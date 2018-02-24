@@ -31,6 +31,7 @@ class InvestmentList extends Component {
                     <Link key={investment.id} to={`/users/${this.props.match.params.id}/investments/${investment.id}`}>
                         <div>{investment.id}</div> 
                         <h3>Name: {investment.ticker}</h3>
+                
                     </Link>
                 ))}
 
