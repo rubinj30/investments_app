@@ -6,13 +6,15 @@ class SingleInvestmentPage extends Component {
     state = {
         investment: {},
         investmentInfo: {},
-        dailyStockPrices: {}
+        dailyStockPrices: {},
+        fundamentals: {}
     }
 
     componentWillMount = async () => {
         await this.getInvestment()
         // await this.fetchStockInfoFromApi()
         await this.fetchDailyStockPrices()
+        // await this.fetchFundamentals()
     }
 
     getInvestment = async () => {
@@ -21,25 +23,44 @@ class SingleInvestmentPage extends Component {
         this.setState({ investment: response.data })
     }
 
-    // fetchStockInfoFromApi = async () => {
-    //     if (this.state.investment.category === 'stock') {
+    fetchStockInfoFromApi = async () => {
+        if (this.state.investment.category === 'stock') {
 
-    //         const URL = `https://api.intrinio.com/companies?identifier=${this.state.investment.ticker}`
-    //         const response = await axios.get(URL,
-    //             {
-    //                 headers: {
-    //                     "X-Authorization-Public-Key": ""
-    //                 }
-    //             })
-    //         this.setState({ investmentInfo: response.data })
-    //     }
-    // }
+            const URL = `https://api.intrinio.com/companies?identifier=${this.state.investment.ticker}`
+            const response = await axios.get(URL,
+                {
+                    headers: {
+                        "X-Authorization-Public-Key": process.env.REACT_APP_STOCK_INFO
+                    }
+                })
+            this.setState({ investmentInfo: response.data })
+        }
+    }
 
     fetchDailyStockPrices = async () => {
-        const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=${this.state.investment.ticker}&apikey=`
+        try {
+        const api_key = process.env.REACT_APP_TIME_SERIES
+        const URL = `https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=${this.state.investment.ticker}&apikey=${api_key}`
         const response = await axios.get(URL)
         this.setState({ dailyStockPrices: response.data["Weekly Adjusted Time Series"] })
+        }
+        catch (err) {
+            console.log(err)
+        }   
     }
+
+    fetchFundamentals = async () => {
+        const URL = `https://api.intrinio.com/data_point?identifier=${this.state.investment.ticker}&item=debttoequity,pricetoearnings,ebitda,grossmargin,debttoequity`
+        const response = await axios.get(URL,
+            {
+                headers: {
+                    "X-Authorization-Public-Key": process.env.REACT_APP_STOCK_INFO
+                }
+            })
+        this.setState({fundamentals: response.data})
+    
+    }
+
 
     render() {
         // object of weekly stock prices
@@ -65,6 +86,12 @@ class SingleInvestmentPage extends Component {
 
                             <div>Industry: {this.state.investmentInfo.industry_category}</div>
                             <div>Exchange: {this.state.investmentInfo.stock_exchange}</div>
+                            {/* <div>Fundamentals: Debt-to-Equity Ratio {this.state.fundamentals}</div> */}
+                            {/* <div>Fundamentals: Gross Margin {this.state.fundamentals.data[4].value}</div> */}
+                            <div>Fundamentals:</div>
+                            <div>Fundamentals:</div>
+                            <div>Fundamentals:</div>
+                            
                             <div><a href="http://amazon.com" target="_blank">Visit Website{this.state.investmentInfo.url}</a></div>
                             <p>{this.state.investmentInfo.short_description}</p>
                         </div>

@@ -32,9 +32,9 @@ class InvestmentList extends Component {
                     <Column>
                     {this.state.investments.map(investment => (
                         <div>
-                            ID {investment.id}
+                            
                             <Link key={investment.id} to={`/users/${this.props.match.params.id}/investments/${investment.id}`}>
-                                <td>{investment.ticker}</td>
+                                {investment.ticker}
                             </Link>
                             
                         </div>
